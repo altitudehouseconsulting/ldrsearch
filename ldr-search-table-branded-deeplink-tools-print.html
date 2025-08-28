@@ -462,7 +462,7 @@
       const doc = `<html><head><meta charset="utf-8"><title>Sanford LDR — Print View</title><style>${css}</style></head>
         <body><h1>Sanford LDR — Print View</h1><div class="meta">${meta.map(esc).join(" • ")}</div>
         <table><thead><tr><th>Schedule</th><th>Page</th><th>Section</th><th>Subsection</th><th>Section Title</th><th>Item Key</th><th>Item Value</th></tr></thead>
-        <tbody>${rowsHtml}</tbody></table><script>window.onload=()=>window.print();</script></body></html>`;
+        <tbody>${rowsHtml}</tbody></table><script>window.onload=()=>window.print();<\/script></body></html>`;
       w.document.open(); w.document.write(doc); w.document.close(); setToolStatus("Print view opened");
     });
 
