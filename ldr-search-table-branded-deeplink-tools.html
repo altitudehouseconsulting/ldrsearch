@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Altitude House Consulting — Sanford LDR Search (Deep Links + Tools)</title>
+  <style>
+    :root{
+      --bg:#071022; --surface:#0b152e; --surface-2:#112046;
+      --text:#ecf3ff; --muted:#a6b8d9; --accent:#3da2ff; --accent-2:#84c6ff;
+      --border:#1e2f58; --chip:#122550; --warning:#ffd166; --focus:#b1d7ff;
+    }
+    *{ box-sizing:border-box; }
+    body{ margin:0; background:var(--bg); color:var(--text);
+      font-family:ui-sans-serif, system-ui, Segoe UI, Roboto, Helvetica, Arial, Apple Color Emoji, Segoe UI Emoji; }
+    a{ color:var(--accent-2); text-decoration:none; }
+    a:hover{ text-decoration:underline; }
+    .banner{ background:linear-gradient(180deg, var(--surface-2) 0%, rgba(17,32,70,0.96) 70%, rgba(17,32,70,0) 100%);
+      border-bottom:1px solid var(--border); padding:14px 0 8px 0; position:sticky; top:0; z-index:20; backdrop-filter:saturate(110%) blur(6px); }
+    .container{ max-width:1200px; margin:0 auto; padding:0 14px; }
+    .brand-row{ display:flex; gap:14px; align-items:center; justify-content:space-between; flex-wrap:wrap; }
+    .brand-left{ display:flex; gap:12px; align-items:center; }
+    .logo{ width:42px; height:42px; border-radius:8px; overflow:hidden; border:1px solid var(--border);
+      display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--accent-2); background:#0a1430; }
+    .titles h1{ margin:0; font-size:18px; }
+    .titles p{ margin:0; font-size:12px; color:var(--muted); }
+    .badge{ font-size:12px; color:var(--accent-2); background:var(--chip); padding:4px 8px; border-radius:999px; border:1px solid var(--border); white-space:nowrap; }
+    .about{ margin-top:10px; background:var(--surface); border:1px solid var(--border); border-radius:14px; overflow:hidden; }
+    .about summary{ list-style:none; cursor:pointer; padding:12px 14px; display:flex; align-items:center; justify-content:space-between; background:#0f1f44; border-bottom:1px solid var(--border); }
+    .about summary::-webkit-details-marker{ display:none; }
+    .about .content{ padding:12px 14px; color:var(--text); }
+    .about .callout{ display:flex; gap:10px; align-items:flex-start; background:#0e1d3c; border:1px dashed var(--border); border-radius:12px; padding:10px 12px; margin-top:8px; }
+    .about .callout b{ color:var(--warning); }
+
+    .controls{ margin-top:12px; display:grid; grid-template-columns:1fr 1fr 1fr 1fr auto; gap:10px; align-items:end; }
+    .field{ display:flex; flex-direction:column; gap:6px; }
+    label{ font-size:12px; color:var(--muted); }
+    input[type="text"], select, button.btn{ width:100%; padding:10px 12px; border-radius:10px;
+      background:#0c1734; color:var(--text); border:1px solid var(--border); outline:none; }
+    select[multiple]{ height:120px; }
+    .btn{ cursor:pointer; background:#0d1a39; }
+    .btn:hover{ border-color:var(--accent); }
+    .tool-row{ margin-top:8px; display:flex; gap:8px; flex-wrap:wrap; }
+    .tool{ padding:8px 12px; border-radius:10px; border:1px solid var(--border); background:#0d1a39; color:var(--text); cursor:pointer; font-size:13px; }
+    .tool:hover{ border-color:var(--accent); }
+
+    .stats{ display:flex; gap:12px; align-items:center; margin:10px 0 0 0; color:var(--muted); font-size:12px; flex-wrap:wrap; }
+    .chip{ background:var(--chip); color:var(--accent-2); padding:4px 8px; border-radius:999px; border:1px solid var(--border); }
+
+    main{ padding:14px 0 60px 0; }
+    .table-wrap{ background:var(--surface); border:1px solid var(--border); border-radius:14px; overflow:hidden; }
+    table{ width:100%; border-collapse:collapse; }
+    thead th{ text-align:left; font-weight:600; font-size:12px; color:var(--muted); padding:10px; background:#0f1f44; border-bottom:1px solid var(--border); position:sticky; top:214px; z-index:5; }
+    tbody td{ padding:12px 10px; border-bottom:1px solid var(--border); vertical-align:top; font-size:14px; line-height:1.35; }
+    tbody tr:hover{ background:#0f1f44; }
+    .nowrap{ white-space:nowrap; }
+    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace; }
+    .pagination{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:flex-end; padding:12px; border-top:1px solid var(--border); background:#0f1f44; }
+    .page-btn{ min-width:36px; text-align:center; padding:8px 10px; border-radius:10px; border:1px solid var(--border); background:#0d1a39; color:var(--text); cursor:pointer; font-size:13px; }
+    .page-btn[disabled]{ opacity:0.5; cursor:not-allowed; }
+    .page-btn.active{ border-color:var(--accent); color:var(--accent-2); }
+    .downloads{ margin-top:8px; font-size:12px; }
+    .downloads a{ color:var(--accent-2); }
+    @media (max-width:1200px){ .controls{ grid-template-columns:1fr 1fr; } thead th{ top:276px; } }
+  </style>
+</head>
+<body>
+  <div class="banner" role="banner">
+    <div class="container">
+      <div class="brand-row" aria-label="Brand header">
+        <div class="brand-left">
+          <div class="logo" aria-hidden="true">AH</div>
+          <div class="titles">
+            <h1>Altitude House Consulting — Sanford LDR Search</h1>
+            <p>Deep links, subsection filter, copy link & export tools</p>
+          </div>
+        </div>
+        <div class="badge" id="datasetInfo">Loading…</div>
+      </div>
+
+      <details class="about">
+        <summary><strong>About & Disclaimer</strong><span style="color:var(--muted); font-size:12px;">&nbsp;click to expand</span></summary>
+        <div class="content">
+          <p>This is a searchable reference built from the Sanford LDR Schedules. For permitting and compliance, confirm with official sources.</p>
+          <div class="callout"><div>⚠️</div><div><b>Not legal advice.</b> Complex tables may be flattened. Verify setbacks, uses, heights, buffers, etc. with the City.</div></div>
+          <p style="margin-top:8px; color:var(--muted); font-size:12px;">Columns: <code>schedule</code>, <code>page</code>, <code>section</code>, <code>subsection</code>, <code>section_title</code>, <code>item_key</code>, <code>item_value</code>.</p>
+        </div>
+      </details>
+
+      <div class="controls" aria-label="Search and filters">
+        <div class="field">
+          <label for="q">Search (item, text, section)</label>
+          <input id="q" type="text" placeholder="e.g., 'setback', 'hangar', 'landscape buffer'">
+        </div>
+        <div class="field">
+          <label for="scheduleSel">Filter by Schedule</label>
+          <select id="scheduleSel" multiple></select>
+        </div>
+        <div class="field">
+          <label for="sectionSel">Filter by Section</label>
+          <select id="sectionSel"><option value="">All sections</option></select>
+        </div>
+        <div class="field">
+          <label for="subSel">Filter by Subsection</label>
+          <select id="subSel"><option value="">All subsections</option></select>
+        </div>
+        <div class="field">
+          <button id="resetBtn" class="btn">Reset Filters</button>
+          <div class="downloads">Downloads:
+            <a href="sanford_ldr_schedules_master_ALL_concatenated_with_subsections.json" download>JSON</a> •
+            <a href="sanford_ldr_schedules_master_ALL_concatenated_with_subsections.csv" download>CSV</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- New tool buttons -->
+      <div class="tool-row" aria-label="Quick tools">
+        <button class="tool" id="copyLinkBtn" title="Copy current deep link">Copy Link</button>
+        <button class="tool" id="downloadFilteredBtn" title="Export currently filtered rows to CSV">Download Filtered CSV</button>
+        <span id="toolStatus" class="chip" aria-live="polite" style="display:none;"></span>
+      </div>
+
+      <div class="stats" aria-live="polite">
+        <span id="rowCount" class="chip">0 rows</span>
+        <span id="filterNote">No filters applied</span>
+      </div>
+    </div>
+  </div>
+
+  <main class="container">
+    <div class="table-wrap" role="region" aria-label="Search results">
+      <table>
+        <thead>
+          <tr>
+            <th class="nowrap">Schedule</th>
+            <th class="nowrap">Page</th>
+            <th class="nowrap">Section</th>
+            <th class="nowrap">Subsection</th>
+            <th>Section Title</th>
+            <th>Item Key</th>
+            <th>Item Value</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+      <div class="pagination" id="pager" aria-label="Pagination"></div>
+    </div>
+  </main>
+
+  <script>
+    // ================================
+    // Deep-link enabled controller + tools
+    // Params:
+    //   q: query text
+    //   schedule: comma-separated list (e.g., "A,R,T")
+    //   section: exact section text (URL-encoded)
+    //   sub: exact subsection text (e.g., "A.")
+    // ================================
+    const PAGE_SIZE = 50;
+    const DATA_URL = "sanford_ldr_schedules_master_ALL_concatenated_with_subsections.json";
+
+    let RAW=[], FILTERED=[], pageIndex=0;
+    let S_TO_SECTIONS = new Map();           // schedule -> [sections]
+    let SS_TO_SUBS = new Map();              // schedule|section -> [subsections]
+
+    const qEl = document.getElementById('q');
+    const scheduleSel = document.getElementById('scheduleSel');
+    const sectionSel = document.getElementById('sectionSel');
+    const subSel = document.getElementById('subSel');
+    const resetBtn = document.getElementById('resetBtn');
+    const tbody = document.getElementById('tbody');
+    const pager = document.getElementById('pager');
+    const rowCount = document.getElementById('rowCount');
+    const filterNote = document.getElementById('filterNote');
+    const datasetInfo = document.getElementById('datasetInfo');
+    const copyLinkBtn = document.getElementById('copyLinkBtn');
+    const downloadFilteredBtn = document.getElementById('downloadFilteredBtn');
+    const toolStatus = document.getElementById('toolStatus');
+
+    function uniq(arr){ return Array.from(new Set(arr)); }
+    function by(a,b){ return String(a).localeCompare(String(b), undefined, {numeric:true, sensitivity:"base"}); }
+    function getSelectedValues(sel){ return Array.from(sel.options).filter(o=>o.selected).map(o=>o.value); }
+    function setOptions(sel, values, includeAll=false, allLabel="All"){
+      sel.innerHTML = "";
+      if(includeAll){
+        const opt = document.createElement('option');
+        opt.value = ""; opt.textContent = `${allLabel}`;
+        sel.appendChild(opt);
+      }
+      values.forEach(v=>{
+        const opt = document.createElement('option'); opt.value=v; opt.textContent=v; sel.appendChild(opt);
+      });
+    }
+    function escapeHtml(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+    function highlight(text, query){
+      if(!query) return text;
+      try{ const re = new RegExp("(" + query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ")", "ig"); return text.replace(re, "<mark>$1</mark>"); }
+      catch(e){ return text; }
+    }
+
+    function updateURL(){
+      const params = new URLSearchParams();
+      const q = qEl.value.trim();
+      const schedules = getSelectedValues(scheduleSel);
+      const section = sectionSel.value;
+      const sub = subSel.value;
+      if(q) params.set("q", q);
+      if(schedules.length) params.set("schedule", schedules.join(","));
+      if(section) params.set("section", section);
+      if(sub) params.set("sub", sub);
+      const newUrl = location.pathname + (params.toString()?("?" + params.toString()):"");
+      history.replaceState(null, "", newUrl);
+    }
+
+    function render(){
+      const start = pageIndex*PAGE_SIZE;
+      const slice = FILTERED.slice(start, start+PAGE_SIZE);
+      const q = qEl.value.trim();
+
+      let rows = "";
+      for(const r of slice){
+        rows += `<tr>
+          <td class="mono nowrap">${escapeHtml(r.schedule)}</td>
+          <td class="mono nowrap">${escapeHtml(r.page)}</td>
+          <td class="mono">${highlight(escapeHtml(r.section||""), q)}</td>
+          <td class="mono nowrap">${escapeHtml(r.subsection||"")}</td>
+          <td>${highlight(escapeHtml(r.section_title||""), q)}</td>
+          <td>${highlight(escapeHtml(r.item_key||""), q)}</td>
+          <td>${highlight(escapeHtml(r.item_value||""), q)}</td>
+        </tr>`;
+      }
+      tbody.innerHTML = rows;
+      rowCount.textContent = new Intl.NumberFormat().format(FILTERED.length) + " rows";
+
+      const sSel = getSelectedValues(scheduleSel);
+      const parts=[]; if(q) parts.push(`q="${q}"`);
+      if(sSel.length) parts.push(`schedules=[${sSel.join(", ")}]`);
+      if(sectionSel.value) parts.push(`section="${sectionSel.value}"`);
+      if(subSel.value) parts.push(`sub="${subSel.value}"`);
+      filterNote.textContent = parts.length ? ("Filters: " + parts.join(" · ")) : "No filters applied";
+
+      renderPager();
+      updateURL();
+    }
+
+    function renderPager(){
+      const totalPages = Math.max(1, Math.ceil(FILTERED.length / PAGE_SIZE));
+      if(pageIndex >= totalPages) pageIndex = 0;
+      let html = "";
+      html += `<button class="page-btn" ${pageIndex===0?"disabled":""} data-nav="prev" aria-label="Previous page">Prev</button>`;
+      const windowSize = 7, half = Math.floor(windowSize/2);
+      let start = Math.max(0, pageIndex-half), end = Math.min(totalPages, start+windowSize);
+      if(end - start < windowSize){ start = Math.max(0, end - windowSize); }
+      for(let i=start; i<end; i++){
+        html += `<button class="page-btn ${i===pageIndex?"active":""}" data-page="${i}" aria-label="Page ${i+1}">${i+1}</button>`;
+      }
+      html += `<button class="page-btn" ${pageIndex===totalPages-1?"disabled":""} data-nav="next" aria-label="Next page">Next</button>`;
+      pager.innerHTML = html;
+      pager.querySelectorAll("[data-nav]").forEach(btn=>{
+        btn.addEventListener("click", e=>{
+          const nav = e.currentTarget.getAttribute("data-nav");
+          if(nav==="prev" && pageIndex>0){ pageIndex--; render(); }
+          if(nav==="next" && (pageIndex+1)<totalPages){ pageIndex++; render(); }
+        });
+      });
+      pager.querySelectorAll("[data-page]").forEach(btn=>{
+        btn.addEventListener("click", e=>{
+          pageIndex = parseInt(e.currentTarget.getAttribute("data-page"), 10); render();
+        });
+      });
+    }
+
+    function applyFilters(){
+      const q = qEl.value.trim().toLowerCase();
+      const schedules = getSelectedValues(scheduleSel);
+      const section = sectionSel.value;
+      const sub = subSel.value;
+
+      FILTERED = RAW.filter(r => {
+        if(schedules.length && !schedules.includes(String(r.schedule))) return false;
+        if(section && String(r.section)!==section) return false;
+        if(sub && String(r.subsection)!==sub) return false;
+        if(q){
+          const hay = [r.item_key, r.item_value, r.section, r.section_title, r.subsection].join(" ").toLowerCase();
+          if(!hay.includes(q)) return false;
+        }
+        return true;
+      });
+      pageIndex = 0; render();
+    }
+
+    function setSchedulesAndSections(){
+      const schedules = uniq(RAW.map(r=>r.schedule)).sort(by);
+      setOptions(scheduleSel, schedules, false);
+      // Precompute section lists per schedule and subsections per schedule|section
+      S_TO_SECTIONS = new Map();
+      SS_TO_SUBS = new Map();
+      for(const s of schedules){
+        const secs = uniq(RAW.filter(r=>r.schedule===s).map(r=>r.section).filter(Boolean)).sort(by);
+        S_TO_SECTIONS.set(s, secs);
+        for(const sec of secs){
+          const key = s + "|" + sec;
+          const subs = uniq(RAW.filter(r=>r.schedule===s && r.section===sec).map(r=>r.subsection).filter(Boolean)).sort(by);
+          SS_TO_SUBS.set(key, subs);
+        }
+      }
+      // Populate global section/subsection with "all"
+      const allSections = uniq(RAW.map(r=>r.section).filter(Boolean)).sort(by);
+      setOptions(sectionSel, allSections, true, "All sections");
+      const allSubs = uniq(RAW.map(r=>r.subsection).filter(Boolean)).sort(by);
+      setOptions(subSel, allSubs, true, "All subsections");
+    }
+
+    function syncSectionAndSubOptions(){
+      // Limit section options by chosen schedules; then limit subsections by chosen schedules+section
+      const chosenSchedules = getSelectedValues(scheduleSel);
+      let sectionsSet = new Set();
+      if(chosenSchedules.length){
+        chosenSchedules.forEach(s => (S_TO_SECTIONS.get(s)||[]).forEach(sec => sectionsSet.add(sec)));
+      }else{
+        S_TO_SECTIONS.forEach(list => list.forEach(sec => sectionsSet.add(sec)));
+      }
+      setOptions(sectionSel, Array.from(sectionsSet).sort(by), true, "All sections");
+      if(sectionSel.value && !sectionsSet.has(sectionSel.value)) sectionSel.value = "";
+
+      let subsSet = new Set();
+      const sec = sectionSel.value;
+      if(chosenSchedules.length && sec){
+        chosenSchedules.forEach(s => {
+          const subs = SS_TO_SUBS.get(s+"|"+sec) || [];
+          subs.forEach(x => subsSet.add(x));
+        });
+      }else if(sec){
+        // all schedules but specific section
+        S_TO_SECTIONS.forEach((secs, s) => {
+          if(secs.includes(sec)){
+            (SS_TO_SUBS.get(s+"|"+sec) || []).forEach(x => subsSet.add(x));
+          }
+        });
+      }else{
+        // no section filter -> all subs
+        SS_TO_SUBS.forEach(list => list.forEach(x => subsSet.add(x)));
+      }
+      setOptions(subSel, Array.from(subsSet).sort(by), true, "All subsections");
+      if(subSel.value && !subsSet.has(subSel.value)) subSel.value = "";
+    }
+
+    function debounce(fn, ms){ let t; return (...args)=>{ clearTimeout(t); t=setTimeout(()=>fn(...args), ms); }; }
+
+    qEl.addEventListener('input', debounce(applyFilters, 120));
+    scheduleSel.addEventListener('change', ()=>{ syncSectionAndSubOptions(); applyFilters(); });
+    sectionSel.addEventListener('change', ()=>{ syncSectionAndSubOptions(); applyFilters(); });
+    subSel.addEventListener('change', applyFilters);
+    resetBtn.addEventListener('click', ()=>{
+      qEl.value=""; Array.from(scheduleSel.options).forEach(o=>o.selected=false); sectionSel.value=""; subSel.value="";
+      syncSectionAndSubOptions(); applyFilters();
+    });
+
+    // ---------- Tools ----------
+    function setToolStatus(msg){
+      toolStatus.style.display = "inline-block";
+      toolStatus.textContent = msg;
+      setTimeout(()=>{ toolStatus.style.display="none"; }, 2500);
+    }
+
+    copyLinkBtn.addEventListener('click', async ()=>{
+      try{
+        await navigator.clipboard.writeText(window.location.href);
+        setToolStatus("Link copied");
+      }catch(err){
+        // Fallback for insecure contexts
+        const t = document.createElement("textarea");
+        t.value = window.location.href;
+        document.body.appendChild(t);
+        t.select(); document.execCommand("copy"); document.body.removeChild(t);
+        setToolStatus("Link copied");
+      }
+    });
+
+    function toCSV(rows){
+      // Create a CSV string from an array of objects.
+      const headers = ["schedule","page","section","subsection","section_title","item_key","item_value"];
+      const esc = (v) => {
+        if(v==null) v="";
+        v = String(v);
+        if(v.includes('"')) v = v.replace(/"/g, '""');
+        // Quote if value contains comma, quote, or newline
+        if(/[",\n]/.test(v)) v = '"' + v + '"';
+        return v;
+      };
+      const lines = [headers.join(",")];
+      for(const r of rows){
+        lines.push(headers.map(h => esc(r[h])).join(","));
+      }
+      return lines.join("\n");
+    }
+
+    downloadFilteredBtn.addEventListener('click', ()=>{
+      const csv = toCSV(FILTERED);
+      const blob = new Blob([csv], {type:"text/csv;charset=utf-8"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      const ts = new Date().toISOString().replace(/[:T]/g,"-").split(".")[0];
+      a.href = url;
+      a.download = `sanford_ldr_filtered_${ts}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      setToolStatus(`Exported ${FILTERED.length} rows`);
+    });
+
+    function setInitialFromURL(){
+      const p = new URLSearchParams(location.search);
+      const q = p.get("q")||"";
+      const schedules = (p.get("schedule")||"").split(",").map(s=>s.trim()).filter(Boolean);
+      const section = p.get("section")||"";
+      const sub = p.get("sub")||"";
+
+      qEl.value = q;
+
+      // select schedules
+      if(schedules.length){
+        Array.from(scheduleSel.options).forEach(o => o.selected = schedules.includes(o.value));
+      }
+      syncSectionAndSubOptions();
+      if(section){ sectionSel.value = section; syncSectionAndSubOptions(); }
+      if(sub){ subSel.value = sub; }
+    }
+
+    async function init(){
+      try{
+        const res = await fetch(DATA_URL, {cache:"no-store"});
+        RAW = (await res.json()).map(r => ({
+          schedule: String(r.schedule||"").trim(),
+          page: Number(r.page||0),
+          section: String(r.section||""),
+          subsection: String(r.subsection||""),
+          section_title: String(r.section_title||""),
+          item_key: String(r.item_key||""),
+          item_value: String(r.item_value||""),
+        }));
+
+        const schedules = uniq(RAW.map(r=>r.schedule)).sort(by);
+        setOptions(scheduleSel, schedules, false);
+
+        // Precompute section/subsection maps
+        S_TO_SECTIONS = new Map();
+        SS_TO_SUBS = new Map();
+        for(const s of schedules){
+          const secs = uniq(RAW.filter(r=>r.schedule===s).map(r=>r.section).filter(Boolean)).sort(by);
+          S_TO_SECTIONS.set(s, secs);
+          for(const sec of secs){
+            const key = s + "|" + sec;
+            const subs = uniq(RAW.filter(r=>r.schedule===s && r.section===sec).map(r=>r.subsection).filter(Boolean)).sort(by);
+            SS_TO_SUBS.set(key, subs);
+          }
+        }
+
+        // Initialize selects and filters from URL
+        setInitialFromURL();
+
+        document.getElementById('datasetInfo').textContent = `${new Intl.NumberFormat().format(RAW.length)} rows • ${schedules.length} schedules`;
+
+        FILTERED = RAW.slice();
+        applyFilters();
+      }catch(err){
+        datasetInfo.textContent = "Failed to load JSON";
+        tbody.innerHTML = `<tr><td colspan="7">Error loading dataset: ${escapeHtml(String(err))}</td></tr>`;
+        console.error(err);
+      }
+    }
+    init();
+  </script>
+</body>
+</html>
